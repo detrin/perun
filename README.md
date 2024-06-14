@@ -3,7 +3,7 @@ A simple bash script to use wttr.in + openai to produce spoken weather prognosis
 
 ## Usage
 
-You have to install `afplay` on you system first. Then set `OPENAI_API_KEY` enivorment variable.
+You have to install `curl`, `jq` and `afplay` on you system first. Then set `OPENAI_API_KEY` enivorment variable.
 ```
 export OPENAI_API_KEY="*********"
 ```
