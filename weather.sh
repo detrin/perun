@@ -2,7 +2,33 @@
 
 set -e
 
-weather=$(curl -s wttr.in/$1 | head -n 17 | tail -n 10)
+weather=$(curl -s "https://api.open-meteo.com/v1/forecast?latitude=50.0874654&longitude=14.4212503&hourly=temperature_2m,apparent_temperature,precipitation_probability,precipitation&daily=temperature_2m_max,temperature_2m_min&forecast_days=1" | jq '{
+  latitude, 
+  longitude, 
+  generationtime_ms, 
+  utc_offset_seconds, 
+  timezone, 
+  timezone_abbreviation, 
+  elevation, 
+  hourly_units,
+  hourly_records: [ 
+    .hourly.time as $time
+    | .hourly.temperature_2m as $temperature_2m 
+    | .hourly.apparent_temperature as $apparent_temperature 
+    | .hourly.precipitation_probability as $precipitation_probability 
+    | .hourly.precipitation as $precipitation 
+    | range(0; .hourly.time | length) 
+    | { 
+        time: $time[.], 
+        temperature_2m: $temperature_2m[.], 
+        apparent_temperature: $apparent_temperature[.], 
+        precipitation_probability: $precipitation_probability[.], 
+        precipitation: $precipitation[.] 
+      }
+  ],
+  daily_units,
+  daily
+}')
 
 json_payload=$(jq -n \
     --arg model "gpt-4o" \
@@ -27,7 +53,6 @@ response=$(curl -s -X POST https://api.openai.com/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
   -d "$json_payload")
-
 response_text=$(echo "$response" | jq -r '.choices[0].message.content')
 
 tts_json_payload=$(jq -n \
