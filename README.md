@@ -1,5 +1,8 @@
-# weather-to-speech
-A simple bash script to use wttr.in + openai to produce spoken weather prognosis from terminal. 
+# Perun
+
+A simple bash script to use api.open-meteo.com + openai to produce weather summary in text/speech.
+
+Perun is a Slavic god of thunder and lightning and king of the gods.
 
 ## Usage Shell script
 
